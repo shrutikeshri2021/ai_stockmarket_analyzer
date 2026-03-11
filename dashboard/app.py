@@ -851,6 +851,102 @@ for idx, tkr in enumerate(DEFAULT_TICKERS):
             """, unsafe_allow_html=True)
 
 # =====================================================================
+# 📊 EXPLORATORY DATA ANALYSIS (EDA)
+# =====================================================================
+st.markdown('<div class="sec-hdr">📊 Exploratory Data Analysis (EDA)</div>', unsafe_allow_html=True)
+st.markdown("""
+<div class="data-src">
+    🔬 <b>EDA Section</b> — Visual & statistical exploration of the loaded dataset for
+    <b>{ticker}</b>. Analyse price trends, distributions, correlations, and download
+    a professional report.
+</div>
+""".format(ticker=selected_ticker), unsafe_allow_html=True)
+
+from utils.eda_report_generator import (
+    generate_eda_charts, generate_eda_summary,
+    generate_pdf_report, generate_word_report,
+)
+
+# ---- EDA Charts ----
+eda_charts = generate_eda_charts(hist_df)
+
+eda_c1, eda_c2 = st.columns(2)
+with eda_c1:
+    st.plotly_chart(eda_charts["closing_price_trend"], key="eda_close")
+with eda_c2:
+    st.plotly_chart(eda_charts["volume_trend"], key="eda_vol")
+
+eda_c3, eda_c4 = st.columns(2)
+with eda_c3:
+    st.plotly_chart(eda_charts["moving_averages"], key="eda_ma")
+with eda_c4:
+    st.plotly_chart(eda_charts["daily_returns"], key="eda_ret")
+
+st.plotly_chart(eda_charts["correlation_heatmap"], key="eda_corr")
+
+# ---- EDA Summary ----
+eda_summary = generate_eda_summary(hist_df, selected_ticker)
+st.markdown(f"""
+<div style="background:linear-gradient(135deg,#1a1a2e,#0d1b2a); padding:18px 22px;
+            border-radius:12px; border:1px solid #30363d; margin:10px 0;">
+    <div style="font-size:1.05rem; font-weight:700; color:#80deea; margin-bottom:10px;">
+        📋 EDA Summary — {selected_ticker}
+    </div>
+    <div style="color:#c9d1d9; font-size:0.95rem; line-height:1.7;">
+        {"<br>".join(eda_summary["summary_text"].strip().split(chr(10)))}
+    </div>
+</div>
+""", unsafe_allow_html=True)
+
+# ---- Statistical Table ----
+with st.expander("📊 View Detailed Statistics"):
+    stat_cols = [c for c in ["Open", "High", "Low", "Close", "Volume"] if c in hist_df.columns]
+    st.dataframe(
+        hist_df[stat_cols].describe().style.format("{:,.2f}").background_gradient(cmap="Blues"),
+        width='stretch',
+    )
+
+# ---- Download EDA Report ----
+st.markdown("""
+<div style="background:linear-gradient(90deg,#4a148c,#1a237e); padding:12px 20px;
+            border-radius:10px; margin:14px 0 8px 0; color:#e1bee7; font-size:0.95rem;
+            font-weight:600; border-left:4px solid #ea80fc;">
+    📥 <b>Download a Professional EDA Report</b> — Choose PDF or Word format below.
+    The report includes title page, dataset overview, statistics, all charts, and key insights.
+</div>
+""", unsafe_allow_html=True)
+
+eda_dl1, eda_dl2, eda_dl3 = st.columns([1, 1, 2])
+
+_eda_company_name = company.get("name", selected_ticker) if company else selected_ticker
+
+with eda_dl1:
+    try:
+        pdf_bytes = generate_pdf_report(hist_df, selected_ticker, _eda_company_name)
+        st.download_button(
+            label="📄 Download PDF Report",
+            data=pdf_bytes,
+            file_name=f"{selected_ticker}_EDA_Report.pdf",
+            mime="application/pdf",
+            key="eda_pdf_dl",
+        )
+    except ImportError:
+        st.warning("Install `reportlab` for PDF: `pip install reportlab`")
+
+with eda_dl2:
+    try:
+        docx_bytes = generate_word_report(hist_df, selected_ticker, _eda_company_name)
+        st.download_button(
+            label="📝 Download Word Report",
+            data=docx_bytes,
+            file_name=f"{selected_ticker}_EDA_Report.docx",
+            mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            key="eda_docx_dl",
+        )
+    except ImportError:
+        st.warning("Install `python-docx` for Word: `pip install python-docx`")
+
+# =====================================================================
 # FOOTER
 # =====================================================================
 st.markdown("---")
