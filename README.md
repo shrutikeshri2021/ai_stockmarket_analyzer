@@ -29,6 +29,7 @@
 - 🚦 **Composite Signal Generation** (BUY / SELL / HOLD) combining prediction, technicals, and sentiment
 - ⚠️ **Risk Assessment** with volatility, drawdown, and trend instability scoring
 - 🏆 **Multi-Stock Ranking & Scanner** for comparing and selecting the best opportunities
+- 📊 **Exploratory Data Analysis (EDA)** with interactive charts and downloadable PDF/Word reports
 
 All of this is presented through an **interactive, vibrant Streamlit dashboard** with neon-themed dark UI, live charts, and real-time data.
 
@@ -54,6 +55,8 @@ All of this is presented through an **interactive, vibrant Streamlit dashboard**
 | 📈 **Quick Comparison** | At-a-glance price & change for all 6 tracked stocks |
 | ⏱️ **Auto-Refresh** | Optional 60-second auto-refresh for live monitoring |
 | 🔔 **Alert System** | Optional email and Telegram alerts on BUY signals |
+| 📊 **EDA Dashboard** | Closing price trend, volume trend, moving averages, daily return distribution, correlation heatmap |
+| 📥 **EDA Report Download** | Professional PDF or Word report with title page, statistics, charts, and auto-generated insights |
 
 ---
 
@@ -277,7 +280,7 @@ cd AITrade
 pip install -r requirements.txt
 ```
 
-**All 13 packages in `requirements.txt`:**
+**All 15 packages in `requirements.txt`:**
 | Package | Purpose |
 |---------|---------|
 | `streamlit` | Web dashboard framework |
@@ -291,8 +294,10 @@ pip install -r requirements.txt
 | `requests` | HTTP requests (for optional NewsAPI) |
 | `feedparser` | Google News RSS feed parsing |
 | `joblib` | Model serialization/deserialization |
-| `matplotlib` | Backup charting (used during training) |
+| `matplotlib` | Backup charting (used during training & EDA reports) |
 | `ta` | Technical analysis library (with pure-pandas fallback) |
+| `reportlab` | Professional PDF report generation (EDA reports) |
+| `python-docx` | Word (.docx) report generation (EDA reports) |
 
 ### Step 3: Download Sample Data (Optional)
 ```bash
@@ -365,7 +370,7 @@ Date, Open, High, Low, Close, Volume
 ```
 AITrade/
 │
-├── 📄 requirements.txt              # 13 Python dependencies
+├── 📄 requirements.txt              # 15 Python dependencies
 ├── 📄 README.md                      # This comprehensive documentation
 │
 ├── 📁 api/                           # ── Data Fetching Layer ──
@@ -448,8 +453,8 @@ AITrade/
 │             └── Generates trade log
 │
 ├── 📁 dashboard/                     # ── Streamlit Web UI ──
-│   └── app.py                        # Main dashboard (~870 lines)
-│       └── 15+ interactive sections with Plotly charts
+│   └── app.py                        # Main dashboard (~960 lines)
+│       └── 17+ interactive sections with Plotly charts
 │           ├── Vibrant CSS (dark gradient, neon metric cards)
 │           ├── Sidebar controls (ticker, period, toggles)
 │           ├── Market overview (6 metric cards)
@@ -469,10 +474,11 @@ AITrade/
 │           ├── Stock rankings (top 5)
 │           ├── Company info (8 fields)
 │           ├── Quick comparison bar (all 6 tickers)
+│           ├── 📊 EDA section (5 charts + summary + report download)
 │           └── Footer
 │
 ├── 📁 utils/                         # ── Shared Utilities ──
-│   └── helpers.py                    # Constants, formatting, alerts (171 lines)
+│   ├── helpers.py                    # Constants, formatting, alerts (171 lines)
 │       ├── DEFAULT_TICKERS = ["AAPL","TSLA","MSFT","RELIANCE.NS","TCS.NS","INFY.NS"]
 │       ├── SEQUENCE_LENGTH = 60
 │       ├── BUY_THRESHOLD = 0.02
@@ -486,6 +492,12 @@ AITrade/
 │       ├── send_telegram_alert()           → Telegram Bot API alerts
 │       └── get_project_root()              → Path resolution
 │
+│   └── eda_report_generator.py       # EDA report generation (622 lines)
+│       ├── generate_eda_charts(df)         → 5 Plotly charts for dashboard
+│       ├── generate_eda_summary(df)        → Stats dict + summary text
+│       ├── generate_pdf_report(df)         → Professional PDF report (bytes)
+│       └── generate_word_report(df)        → Professional Word .docx (bytes)
+│
 └── 📁 data/                          # ── Data Storage ──
     ├── generate_sample.py            # Downloads Yahoo Finance data for all tickers
     └── historical_data.csv           # Saved OHLCV data (auto-generated)
@@ -495,7 +507,7 @@ AITrade/
 
 ## 🖥️ Dashboard Sections Explained
 
-The dashboard contains **15+ interactive sections**, each providing a different aspect of stock analysis:
+The dashboard contains **17+ interactive sections**, each providing a different aspect of stock analysis:
 
 ---
 
@@ -770,6 +782,49 @@ The table uses a **red-to-green gradient** on the Rank Score column — greener 
 
 ---
 
+### 17. 📊 Exploratory Data Analysis (EDA)
+**What it shows:** A complete visual and statistical exploration of the loaded dataset with downloadable reports.
+
+**Interactive Charts (displayed in the dashboard):**
+| Chart | What It Shows |
+|-------|---------------|
+| **Closing Price Trend** | Line chart with fill showing price movement over time |
+| **Volume Trend** | Color-coded bar chart (green = up day, red = down day) |
+| **Moving Averages (20 & 50)** | Close price overlaid with MA 20 and MA 50 |
+| **Daily Return Distribution** | Histogram of daily percentage returns |
+| **Correlation Heatmap** | Heatmap of Open, High, Low, Close, Volume correlations |
+
+**Auto-Generated EDA Summary:**
+The system automatically generates a text summary including:
+- Dataset size (number of trading records)
+- Time range covered
+- Mean, median, min, max closing prices
+- Annualised volatility estimate with label (low/moderate/high)
+- Long-term trend direction (upward/downward/sideways)
+- Volume-price correlation observation
+- Data quality status (missing values, duplicates)
+
+**Expandable Statistics Table:**
+Full `describe()` output for Open, High, Low, Close, Volume with blue gradient styling.
+
+**📥 Download EDA Report:**
+Two download buttons generate professional reports on-the-fly:
+
+| Format | Button | Library Used |
+|--------|--------|--------------|
+| **PDF** | 📄 Download PDF Report | `reportlab` |
+| **Word (.docx)** | 📝 Download Word Report | `python-docx` |
+
+**Report Contents (both formats):**
+1. **Title Page** — Company name, stock ticker, date generated
+2. **Dataset Overview** — Data source, time range, record count, features
+3. **Data Cleaning Summary** — Missing values, duplicates, preparation steps
+4. **Statistical Summary** — Mean, median, min, max, std deviation, volatility
+5. **Visual Analysis** — All 5 charts embedded as images
+6. **Key Insights** — Auto-generated observations about trend, volatility, correlations, price range
+
+---
+
 ## 🔁 Complete Data Flow Architecture
 
 ```
@@ -829,12 +884,13 @@ The table uses a **red-to-green gradient** on the Rank Score column — greener 
               │  dashboard/app.py             │
               │                              │
               │  Renders all results in      │
-              │  15+ interactive sections    │
+              │  17+ interactive sections    │
               │  with Plotly charts &        │
               │  neon-themed dark UI         │
               │  → CSS Grid layouts          │
               │  → Auto-refresh option       │
               │  → Alert dispatch            │
+              │  → EDA charts & reports      │
               └──────────────────────────────┘
 ```
 
@@ -881,8 +937,14 @@ The table uses a **red-to-green gradient** on the Rank Score column — greener 
 | Library | Purpose |
 |---------|---------|
 | **Plotly** | Candlestick, line, bar, donut/pie charts |
-| **matplotlib** | Training metrics visualization |
+| **matplotlib** | Training metrics visualization & EDA report chart rendering |
 | **CSS Grid** | Custom grid layouts for scanner, portfolio, indicators tables |
+
+### Report Generation
+| Library | Purpose |
+|---------|---------|
+| **reportlab** | Professional PDF report creation with tables, charts, and styling |
+| **python-docx** | Word (.docx) report creation with embedded charts and formatting |
 
 > **Note on CSS Grid:** Streamlit's HTML sanitizer strips `<table>`, `<tr>`, `<td>`, `<th>` tags. AITrade works around this by using `<div>` elements with `display: grid` CSS — achieving the same tabular layout without restricted HTML tags.
 
@@ -998,6 +1060,8 @@ This project is for **educational and research purposes only**. Not intended for
 - **[Plotly](https://plotly.com)** — Interactive visualization library
 - **[pandas](https://pandas.pydata.org)** — Data analysis toolkit
 - **[NumPy](https://numpy.org)** — Numerical computing
+- **[ReportLab](https://www.reportlab.com)** — PDF report generation
+- **[python-docx](https://python-docx.readthedocs.io)** — Word document generation
 
 ---
 
