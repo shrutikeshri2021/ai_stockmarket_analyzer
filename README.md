@@ -11,7 +11,7 @@
 
 **A full-stack AI-powered stock market analysis and prediction system built with Python, Streamlit, scikit-learn, and real-time Yahoo Finance data.**
 
-[Features](#-features) · [How It Works](#-how-it-works) · [Installation](#-installation) · [Usage](#-usage) · [Project Structure](#-project-structure) · [Dashboard Sections](#-dashboard-sections-explained) · [Tech Stack](#-technology-stack)
+[Features](#-features) · [How It Works](#-how-it-works) · [Installation](#-installation) · [Usage](#-usage) · [Project Structure](#-project-structure) · [Dashboard Sections](#-dashboard-sections-explained) · [Beginner Learning Mode](#-beginner-learning-mode-18-sections) · [Tech Stack](#-technology-stack)
 
 </div>
 
@@ -30,8 +30,14 @@
 - ⚠️ **Risk Assessment** with volatility, drawdown, and trend instability scoring
 - 🏆 **Multi-Stock Ranking & Scanner** for comparing and selecting the best opportunities
 - 📊 **Exploratory Data Analysis (EDA)** with interactive charts and downloadable PDF/Word reports
+- 🎓 **Beginner Learning Mode** — 18-section interactive learning system with glossary, lessons, fake market simulator, paper trading, quizzes, and AI coaching
+- 🔔 **Price Alert System** — configurable price-based and percentage-change alerts with real-time evaluation
+- 🏭 **Sector Performance Dashboard** — compare performance across 7 major market sectors
+- 📓 **Trading Journal** — log, track, and analyze your paper trades with statistics and history
 
-All of this is presented through an **interactive, vibrant Streamlit dashboard** with neon-themed dark UI, live charts, and real-time data.
+All of this is presented through a **tab-based Streamlit dashboard** with two modes:
+- **🎓 Beginner Learning Mode** — A guided, interactive stock market education system for newcomers
+- **📈 Advanced Trading Mode** — Full-featured professional analysis dashboard with neon-themed dark UI, live charts, and real-time data
 
 > ⚠️ **Disclaimer:** This project is for **educational and research purposes only**. It is NOT financial advice. Always consult a licensed financial advisor before making investment decisions.
 
@@ -57,6 +63,14 @@ All of this is presented through an **interactive, vibrant Streamlit dashboard**
 | 🔔 **Alert System** | Optional email and Telegram alerts on BUY signals |
 | 📊 **EDA Dashboard** | Closing price trend, volume trend, moving averages, daily return distribution, correlation heatmap |
 | 📥 **EDA Report Download** | Professional PDF or Word report with title page, statistics, charts, and auto-generated insights |
+| 🔔 **Price Alert System** | Set custom price alerts (above/below thresholds, % change) with real-time evaluation and dashboard notifications |
+| 🏭 **Sector Performance** | Compare 7 major sectors (Technology, Healthcare, Finance, Energy, Consumer, Industrial, Communication) side-by-side |
+| 📓 **Trading Journal** | Log paper trades with entry/exit prices, P&L tracking, trade statistics, and exportable history |
+| 🎓 **Beginner Learning Mode** | 18-section interactive learning system: glossary, step-by-step lessons, chart playground, fake market simulator, paper trading, quizzes, AI coaching, and graduation tracking |
+| 🎮 **Fake Stock Simulator** | 5 synthetic stocks with geometric Brownian motion — practice trading without risking real money |
+| 📝 **Quiz System** | 18 multiple-choice questions across 6 categories to test stock market knowledge |
+| 💰 **Paper Trading Engine** | Virtual portfolio manager with buy/sell execution, cash tracking, holdings, and performance stats |
+| 🧑‍🏫 **AI Trading Coach** | Personalized AI-generated advice based on current market data and user's learning progress |
 
 ---
 
@@ -332,6 +346,7 @@ The dashboard opens automatically at **http://localhost:8501** in your browser.
 
 | Control | Location | What to Do |
 |---------|----------|------------|
+| **🎓/📈 Tab Selector** | Top of page | Switch between Beginner Learning Mode and Advanced Trading Mode |
 | **🔎 Select Stock** | Sidebar dropdown | Choose from AAPL, TSLA, MSFT, RELIANCE.NS, TCS.NS, INFY.NS |
 | **Custom Ticker** | Sidebar text input | Type any valid Yahoo Finance ticker (e.g., `GOOGL`, `AMZN`, `META`, `WIPRO.NS`) |
 | **📅 Historical Period** | Sidebar dropdown | Choose 6 months, 1 year, 2 years, or 5 years of data |
@@ -340,6 +355,7 @@ The dashboard opens automatically at **http://localhost:8501** in your browser.
 | **🏆 Show Stock Rankings** | Sidebar checkbox | Toggle stock ranking comparison |
 | **🔴 Real-Time Scanner** | Sidebar checkbox | Toggle multi-stock live scanner |
 | **⏱️ Auto Refresh** | Sidebar checkbox | Enable 60-second auto-refresh for live monitoring |
+| **🔔 Price Alerts** | Sidebar panel | Set custom price alerts (above/below/% change) with real-time evaluation |
 | **🔔 Email Alerts** | Sidebar checkbox | Enable email notifications on BUY signals |
 | **🔔 Telegram Alerts** | Sidebar checkbox | Enable Telegram notifications on BUY signals |
 
@@ -381,6 +397,8 @@ AITrade/
 │       ├── get_multiple_tickers_data()     → Batch fetch multiple stocks
 │       ├── get_yesterday_performance()     → Previous close vs today open
 │       └── get_company_info(ticker)        → Name, sector, market cap, P/E
+│   └── earnings_calendar.py          # Earnings calendar data (162 lines)
+│       └── get_earnings_calendar(ticker)   → Upcoming earnings dates & estimates
 │
 ├── 📁 models/                        # ── Machine Learning Layer ──
 │   ├── lstm_model.py                 # Model builders & prediction (120 lines)
@@ -413,16 +431,19 @@ AITrade/
 │       └── INFY.NS/
 │
 ├── 📁 indicators/                    # ── Technical Analysis Engine ──
-│   └── technical_indicators.py       # 14 indicator functions (219 lines)
-│       ├── compute_rsi(df, period=14)
-│       ├── compute_macd(df, fast=12, slow=26, signal=9)
-│       ├── compute_moving_average(df, window)
-│       ├── compute_ema(df, span)
-│       ├── compute_bollinger_bands(df, window=20, num_std=2.0)
-│       ├── compute_volume_trend(df, window=20)
-│       ├── compute_atr(df, period=14)
-│       ├── calculate_all_indicators(df)    → Adds all 14 columns to DataFrame
-│       └── technical_score(df)             → Returns -100 to +100 score
+│   ├── technical_indicators.py       # 14 indicator functions (219 lines)
+│   │   ├── compute_rsi(df, period=14)
+│   │   ├── compute_macd(df, fast=12, slow=26, signal=9)
+│   │   ├── compute_moving_average(df, window)
+│   │   ├── compute_ema(df, span)
+│   │   ├── compute_bollinger_bands(df, window=20, num_std=2.0)
+│   │   ├── compute_volume_trend(df, window=20)
+│   │   ├── compute_atr(df, period=14)
+│   │   ├── calculate_all_indicators(df)    → Adds all 14 columns to DataFrame
+│   │   └── technical_score(df)             → Returns -100 to +100 score
+│   │
+│   └── candlestick_patterns.py       # Candlestick pattern detection (275 lines)
+│       └── detect_patterns(df)             → Identifies candlestick patterns (Doji, Hammer, Engulfing, etc.)
 │
 ├── 📁 sentiment/                     # ── NLP Sentiment Engine ──
 │   └── news_sentiment.py             # Google News + VADER (189 lines)
@@ -453,50 +474,113 @@ AITrade/
 │             └── Generates trade log
 │
 ├── 📁 dashboard/                     # ── Streamlit Web UI ──
-│   └── app.py                        # Main dashboard (~960 lines)
-│       └── 17+ interactive sections with Plotly charts
-│           ├── Vibrant CSS (dark gradient, neon metric cards)
-│           ├── Sidebar controls (ticker, period, toggles)
-│           ├── Market overview (6 metric cards)
-│           ├── Raw data preview (first 30 rows)
-│           ├── Price chart (candlestick + MAs + BBs + AI prediction star)
-│           ├── RSI chart (overbought/oversold zones)
-│           ├── Volume chart (colored bars + MA)
-│           ├── MACD chart (line + signal + histogram)
-│           ├── Technical indicators grid (14 values)
-│           ├── Yesterday performance grid
-│           ├── Sentiment analysis (donut chart + headlines)
-│           ├── Risk assessment (bar + 4 metrics)
-│           ├── Signal breakdown (4 components)
-│           ├── Multi-stock scanner (live grid)
-│           ├── Portfolio allocation ($10K suggestion)
-│           ├── Backtesting (equity curve + trade log)
-│           ├── Stock rankings (top 5)
-│           ├── Company info (8 fields)
-│           ├── Quick comparison bar (all 6 tickers)
-│           ├── 📊 EDA section (5 charts + summary + report download)
-│           └── Footer
+│   ├── app.py                        # Main dashboard (~1255 lines)
+│   │   └── Tab-based interface with 2 modes:
+│   │       ├── 🎓 Beginner Learning Mode tab
+│   │       │     └── Calls render_beginner_dashboard()
+│   │       └── 📈 Advanced Trading Mode tab
+│   │             ├── Vibrant CSS (dark gradient, neon metric cards)
+│   │             ├── Sidebar controls (ticker, period, toggles)
+│   │             ├── Market overview (6 metric cards)
+│   │             ├── Price alerts evaluation & display
+│   │             ├── Raw data preview (first 30 rows)
+│   │             ├── Price chart (candlestick + MAs + BBs + AI prediction star)
+│   │             ├── RSI chart (overbought/oversold zones)
+│   │             ├── Volume chart (colored bars + MA)
+│   │             ├── MACD chart (line + signal + histogram)
+│   │             ├── Technical indicators grid (14 values)
+│   │             ├── Yesterday performance grid
+│   │             ├── Sentiment analysis (donut chart + headlines)
+│   │             ├── Risk assessment (bar + 4 metrics)
+│   │             ├── Signal breakdown (4 components)
+│   │             ├── Multi-stock scanner (live grid)
+│   │             ├── Portfolio allocation ($10K suggestion)
+│   │             ├── Backtesting (equity curve + trade log)
+│   │             ├── Stock rankings (top 5)
+│   │             ├── Company info (8 fields)
+│   │             ├── Quick comparison bar (all 6 tickers)
+│   │             ├── Sector performance dashboard (7 sectors)
+│   │             ├── Trading journal (log, stats, history)
+│   │             ├── 📊 EDA section (5 charts + summary + report download)
+│   │             └── Footer
+│   │
+│   └── beginner_mode.py              # Beginner Learning Mode (~900 lines)
+│       └── render_beginner_dashboard(ticker, price, predicted, signal, hist_df, sentiment)
+│             ├── 18 interactive sections with selectbox navigation
+│             ├── Session-state progress tracking
+│             ├── Fake stock market simulator
+│             ├── Paper trading engine integration
+│             ├── Quiz system (18 questions, 6 categories)
+│             ├── AI trading coach
+│             └── Graduation certificate
 │
 ├── 📁 utils/                         # ── Shared Utilities ──
 │   ├── helpers.py                    # Constants, formatting, alerts (171 lines)
-│       ├── DEFAULT_TICKERS = ["AAPL","TSLA","MSFT","RELIANCE.NS","TCS.NS","INFY.NS"]
-│       ├── SEQUENCE_LENGTH = 60
-│       ├── BUY_THRESHOLD = 0.02
-│       ├── SELL_THRESHOLD = -0.02
-│       ├── normalize_dataframe()           → Min-Max normalization
-│       ├── denormalize_value()             → Reverse normalization
-│       ├── create_sequences()              → Sliding window for ML
-│       ├── fmt_pct() / fmt_currency()      → Formatting helpers
-│       ├── color_signal() / risk_label()   → UI color mapping
-│       ├── send_email_alert()              → Gmail SMTP alerts
-│       ├── send_telegram_alert()           → Telegram Bot API alerts
-│       └── get_project_root()              → Path resolution
-│
-│   └── eda_report_generator.py       # EDA report generation (622 lines)
-│       ├── generate_eda_charts(df)         → 5 Plotly charts for dashboard
-│       ├── generate_eda_summary(df)        → Stats dict + summary text
-│       ├── generate_pdf_report(df)         → Professional PDF report (bytes)
-│       └── generate_word_report(df)        → Professional Word .docx (bytes)
+│   │   ├── DEFAULT_TICKERS = ["AAPL","TSLA","MSFT","RELIANCE.NS","TCS.NS","INFY.NS"]
+│   │   ├── SEQUENCE_LENGTH = 60
+│   │   ├── BUY_THRESHOLD = 0.02
+│   │   ├── SELL_THRESHOLD = -0.02
+│   │   ├── normalize_dataframe()           → Min-Max normalization
+│   │   ├── denormalize_value()             → Reverse normalization
+│   │   ├── create_sequences()              → Sliding window for ML
+│   │   ├── fmt_pct() / fmt_currency()      → Formatting helpers
+│   │   ├── color_signal() / risk_label()   → UI color mapping
+│   │   ├── send_email_alert()              → Gmail SMTP alerts
+│   │   ├── send_telegram_alert()           → Telegram Bot API alerts
+│   │   └── get_project_root()              → Path resolution
+│   │
+│   ├── eda_report_generator.py       # EDA report generation (622 lines)
+│   │   ├── generate_eda_charts(df)         → 5 Plotly charts for dashboard
+│   │   ├── generate_eda_summary(df)        → Stats dict + summary text
+│   │   ├── generate_pdf_report(df)         → Professional PDF report (bytes)
+│   │   └── generate_word_report(df)        → Professional Word .docx (bytes)
+│   │
+│   ├── alerts_engine.py              # Price Alert System (168 lines)
+│   │   ├── evaluate_alerts(price, alerts)  → Check alerts against current price
+│   │   └── format_alerts_for_notification()→ Format triggered alerts for display
+│   │
+│   ├── sector_analysis.py            # Sector Performance Dashboard (133 lines)
+│   │   └── get_sector_performance()        → Returns 7-sector comparison data
+│   │
+│   ├── trade_journal.py              # Trading Journal (231 lines)
+│   │   ├── add_trade(trade_data)           → Log a new paper trade
+│   │   ├── load_journal()                  → Load trade history from JSON
+│   │   ├── get_journal_stats()             → Win rate, P&L, avg return stats
+│   │   └── clear_journal()                 → Reset journal
+│   │
+│   ├── correlation_analysis.py       # Correlation Analyzer (186 lines)
+│   │   └── compute_correlation_matrix()    → Multi-stock correlation heatmap
+│   │
+│   ├── learning_content.py           # Beginner mode content data (~350 lines)
+│   │   ├── GLOSSARY_TERMS                  → 13 stock market term definitions
+│   │   ├── LESSONS                         → 7 step-by-step interactive lessons
+│   │   ├── MARKET_SCENARIOS                → 4 simulated market scenarios
+│   │   ├── TRADING_STRATEGIES              → 4 beginner trading strategies
+│   │   ├── RISK_CONCEPTS                   → 4 risk management concepts
+│   │   ├── SECTOR_INFO                     → Sector overview data
+│   │   └── BEGINNER_TIPS                   → Practical trading tips
+│   │
+│   ├── fake_market_generator.py      # Fake Stock Simulator (~190 lines)
+│   │   ├── generate_fake_ohlcv()           → Synthetic OHLCV via geometric Brownian motion
+│   │   ├── apply_scenario(data, scenario)  → Apply bull/bear/crash/recovery scenarios
+│   │   ├── compute_indicators(df)          → Add indicators to fake data
+│   │   └── generate_fake_prediction(df)    → Simulated AI prediction for fake stocks
+│   │   └── 5 Fake Stocks: TECHX, MEDICO, GREENENERGY, AUTOMAX, DIGITALPAY
+│   │
+│   ├── paper_trading_engine.py       # Paper Trading Engine (~160 lines)
+│   │   ├── init_state(prefix)              → Initialize session-state portfolio
+│   │   ├── buy(ticker, price, shares)      → Execute virtual buy order
+│   │   ├── sell(ticker, price, shares)     → Execute virtual sell order
+│   │   ├── get_cash() / get_holdings()     → Portfolio state queries
+│   │   ├── get_history()                   → Transaction history
+│   │   ├── get_portfolio_stats()           → P&L, total value, returns
+│   │   └── reset()                         → Reset portfolio to initial state
+│   │
+│   └── quiz_engine.py                # Quiz System (~200 lines)
+│       ├── get_questions()                 → 18 MCQs across 6 categories
+│       ├── check_answer(q_id, answer)      → Validate user answer
+│       ├── calculate_score(answers)        → Compute quiz score
+│       └── get_categories()                → List question categories
 │
 └── 📁 data/                          # ── Data Storage ──
     ├── generate_sample.py            # Downloads Yahoo Finance data for all tickers
@@ -507,7 +591,11 @@ AITrade/
 
 ## 🖥️ Dashboard Sections Explained
 
-The dashboard contains **17+ interactive sections**, each providing a different aspect of stock analysis:
+The dashboard uses a **tab-based interface** with two modes:
+- **🎓 Beginner Learning Mode** — 18-section interactive learning system (see [Beginner Learning Mode](#-beginner-learning-mode-18-sections) below)
+- **📈 Advanced Trading Mode** — Full professional analysis dashboard with **20+ interactive sections**
+
+All sections below belong to the **Advanced Trading Mode** tab unless noted otherwise:
 
 ---
 
@@ -825,12 +913,106 @@ Two download buttons generate professional reports on-the-fly:
 
 ---
 
+### 18. 🔔 Price Alert System
+**What it shows:** Configurable price-based alerts that evaluate in real-time against the current stock price.
+
+**Alert Types:**
+| Alert Type | How It Works |
+|-----------|--------------|
+| **Price Above** | Triggers when stock price rises above your target |
+| **Price Below** | Triggers when stock price drops below your target |
+| **% Change Up** | Triggers when daily change exceeds your threshold |
+| **% Change Down** | Triggers when daily drop exceeds your threshold |
+
+**How to use:**
+1. Set alerts in the sidebar using the alert configuration panel
+2. Alerts are evaluated every time the dashboard refreshes
+3. Triggered alerts display with visual notifications in the dashboard
+4. Supports multiple simultaneous alerts per ticker
+
+---
+
+### 19. 🏭 Sector Performance Dashboard
+**What it shows:** A comparative view of 7 major market sectors with representative ETFs/stocks.
+
+| Sector | Representative Ticker |
+|--------|-----------------------|
+| Technology | XLK |
+| Healthcare | XLV |
+| Finance | XLF |
+| Energy | XLE |
+| Consumer Discretionary | XLY |
+| Industrials | XLI |
+| Communication Services | XLC |
+
+**Metrics per sector:** Current price, daily change %, performance trend, relative strength comparison.
+
+**Why it's useful:** Helps identify which sectors are leading or lagging the market — essential for sector rotation strategies.
+
+---
+
+### 20. 📓 Trading Journal
+**What it shows:** A paper trading log where you can record, track, and analyze your trades.
+
+**Features:**
+| Feature | Description |
+|---------|-------------|
+| **Add Trade** | Log ticker, entry/exit price, shares, date, and notes |
+| **Trade History** | Scrollable table of all logged trades with P&L |
+| **Statistics** | Win rate, total P&L, average return, best/worst trade |
+| **Clear Journal** | Reset all trade records |
+
+**How it works:** Trades are saved to a local JSON file (`data/trade_journal.json`) and persist across sessions. Stats update automatically as you add trades.
+
+---
+
+## 🎓 Beginner Learning Mode (18 Sections)
+
+The **Beginner Learning Mode** is a comprehensive, interactive stock market education system designed for newcomers. It's accessible via the first tab in the dashboard.
+
+**Navigation:** Use the dropdown menu to jump to any of the 18 sections. Progress is tracked via session state.
+
+| # | Section | What You'll Learn |
+|---|---------|-------------------|
+| 1 | 🏠 **Introduction** | Welcome overview, what the stock market is, how AITrade helps you learn |
+| 2 | 📖 **Stock Market Glossary** | 13 essential terms (Bull Market, Bear Market, P/E Ratio, Market Cap, RSI, MACD, etc.) with clear definitions |
+| 3 | 📚 **Interactive Lessons** | 7 step-by-step lessons: What is a Stock, How Prices Move, Reading Charts, Technical Indicators 101, Understanding Volume, Sentiment Analysis, Putting It All Together |
+| 4 | 📊 **Chart Playground** | Interactive Plotly charts with real stock data — practice reading candlesticks, MAs, and price patterns |
+| 5 | 📐 **Technical Indicator Learning** | Hands-on exploration of RSI, MACD, Bollinger Bands with visual explanations on live data |
+| 6 | 🤖 **How AI Predictions Work** | Simplified explanation of how the MLP neural network makes predictions, with visual architecture diagram |
+| 7 | 🎮 **Fake Stock Market Simulator** | 5 synthetic stocks (TECHX, MEDICO, GREENENERGY, AUTOMAX, DIGITALPAY) generated with geometric Brownian motion — trade without real money risk |
+| 8 | 💰 **Paper Trading** | Virtual portfolio with $100K starting capital — buy/sell fake stocks, track P&L, view transaction history |
+| 9 | 🔮 **AI Prediction Playground** | See how AI predictions compare to actual prices — experiment with different tickers and understand prediction accuracy |
+| 10 | 🌍 **Market Scenario Simulator** | 4 scenarios (Bull Run, Bear Market, Market Crash, Recovery) — see how indicators behave in each |
+| 11 | 🧪 **Trading Strategy Lab** | Learn 4 beginner strategies: Moving Average Crossover, RSI Reversal, Breakout Trading, Dollar-Cost Averaging |
+| 12 | 🛡️ **Risk Management Training** | 4 key concepts: Position Sizing, Stop-Loss Orders, Diversification, Risk-Reward Ratio |
+| 13 | 📝 **Knowledge Quiz** | 18 multiple-choice questions across 6 categories — test your understanding with instant feedback |
+| 14 | 💼 **Build Your Portfolio** | Practice building a diversified portfolio with allocation suggestions based on risk tolerance |
+| 15 | 📈 **Performance Analyzer** | Analyze real stock performance with simplified metrics and visual explanations |
+| 16 | 🧑‍🏫 **AI Trading Coach** | Personalized AI-generated tips based on current market conditions and your learning progress |
+| 17 | 📊 **Progress Tracker** | Visual progress bar showing sections completed, quiz scores, and learning milestones |
+| 18 | 🎓 **Graduation** | Summary of everything learned, certificate of completion, and next steps for advanced trading |
+
+**Fake Stock Simulator Details:**
+
+| Fake Stock | Sector | Base Price | Volatility | Drift |
+|-----------|--------|-----------|-----------|-------|
+| 📱 TECHX | Technology | ~$150 | Moderate-High | Positive |
+| 💊 MEDICO | Healthcare | ~$85 | Low-Moderate | Positive |
+| ⚡ GREENENERGY | Energy | ~$45 | High | Positive |
+| 🚗 AUTOMAX | Automotive | ~$200 | Moderate | Neutral |
+| 💳 DIGITALPAY | Finance | ~$120 | Moderate | Positive |
+
+Each fake stock generates 252 trading days of realistic OHLCV data using geometric Brownian motion (GBM) with sector-appropriate parameters.
+
+---
+
 ## 🔁 Complete Data Flow Architecture
 
 ```
 ┌──────────────────────────────────────────────────────────────────────────┐
 │                          USER (Streamlit Dashboard)                      │
-│   Select ticker → Choose period → Toggle sections → View results        │
+│   Select tab → Choose ticker → Toggle sections → View results           │
 └──────────────────────────┬───────────────────────────────────────────────┘
                            │
               ┌────────────▼────────────────┐
@@ -869,28 +1051,37 @@ Two download buttons generate professional reports on-the-fly:
               │  → Stock Rankings            │
               └──────────────┬───────────────┘
                              │
-              ┌──────────────▼───────────────┐
-              │  backtesting/backtest.py      │
-              │                              │
-              │  Simulates strategy on       │
-              │  historical data             │
-              │  → Equity curve              │
-              │  → Win rate, Sharpe ratio    │
-              │  → Max drawdown              │
-              │  → Trade log                 │
-              └──────────────┬───────────────┘
-                             │
-              ┌──────────────▼───────────────┐
+         ┌───────────────────┼───────────────────────┐
+         ▼                   ▼                       ▼
+┌──────────────────┐ ┌──────────────────┐ ┌────────────────────┐
+│ backtesting/     │ │ utils/           │ │ utils/             │
+│ backtest.py      │ │ alerts_engine    │ │ sector_analysis    │
+│                  │ │ trade_journal    │ │                    │
+│ Strategy sim     │ │                  │ │ 7-sector compare   │
+│ Equity curve     │ │ Price alerts     │ │ ETF performance    │
+│ Sharpe ratio     │ │ Trade logging    │ │                    │
+└────────┬─────────┘ └────────┬─────────┘ └────────┬───────────┘
+         │                    │                     │
+         └────────────────────┼─────────────────────┘
+                              ▼
+              ┌──────────────────────────────┐
               │  dashboard/app.py             │
               │                              │
-              │  Renders all results in      │
-              │  17+ interactive sections    │
-              │  with Plotly charts &        │
-              │  neon-themed dark UI         │
-              │  → CSS Grid layouts          │
-              │  → Auto-refresh option       │
-              │  → Alert dispatch            │
-              │  → EDA charts & reports      │
+              │  🎓 Beginner Learning Mode   │
+              │    → 18 interactive sections │
+              │    → Fake stock simulator    │
+              │    → Paper trading engine    │
+              │    → Quiz system (18 Qs)     │
+              │    → AI coaching             │
+              │                              │
+              │  📈 Advanced Trading Mode    │
+              │    → 20+ interactive sections│
+              │    → Plotly charts            │
+              │    → Neon-themed dark UI     │
+              │    → Price alerts            │
+              │    → Sector performance      │
+              │    → Trading journal         │
+              │    → EDA charts & reports    │
               └──────────────────────────────┘
 ```
 
@@ -1041,6 +1232,9 @@ The built-in backtester simulates a **technical-score-based trading strategy**:
 - Add cryptocurrency support
 - Add options analysis
 - Mobile-responsive CSS improvements
+- Expand beginner quiz question bank
+- Add multiplayer paper trading competitions
+- Integrate real broker APIs for live trading
 
 ---
 
@@ -1067,9 +1261,9 @@ This project is for **educational and research purposes only**. Not intended for
 
 <div align="center">
 
-### Built with ❤️ by AITrade | v2.0
+### Built with ❤️ by AITrade | v3.0
 
-📡 Data: Yahoo Finance &nbsp;|&nbsp; 🧠 ML: scikit-learn MLP + Random Forest &nbsp;|&nbsp; 📰 News: Google News RSS &nbsp;|&nbsp; 💻 UI: Streamlit + Plotly
+📡 Data: Yahoo Finance &nbsp;|&nbsp; 🧠 ML: scikit-learn MLP + Random Forest &nbsp;|&nbsp; 📰 News: Google News RSS &nbsp;|&nbsp; 💻 UI: Streamlit + Plotly &nbsp;|&nbsp; 🎓 Learn: 18-Section Beginner Mode
 
 ⚠️ *Educational purposes only. Not financial advice.*
 
